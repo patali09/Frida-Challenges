@@ -10,7 +10,7 @@ But here is the twist - it has **two modes**:
 | Mode | What It Does |
 |------|-------------|
 | **Secure Mode** | Credentials are stored in a biometric-protected encrypted vault. Your fingerprint is the key to the vault. |
-| **Bypassable Mode** | Biometric is checked, but credentials are stored as plaintext. The fingerprint is just a door handle, not a lock. |
+| **Bypassable Mode** | Biometric is checked, but the password is stored unhashed - encrypted at rest, but fully recoverable at runtime without biometrics. The fingerprint is just a door handle, not a lock. |
 
 The entire point of the app is to show developers the difference. Let us break down both.
 
@@ -108,7 +108,7 @@ Even with root access, the key itself never leaves the secure hardware. I can du
 
 // During enrollment:
 await _storage.saveUsername(username);
-await _storage.savePassword(password);  // <-- plaintext password stored here
+await _storage.savePassword(password);  // <-- unhashed password stored (encrypted at rest, but recoverable at runtime)
 ```
 
 ```dart
@@ -127,7 +127,7 @@ if (didAuthenticate) {
 
 ### What Is Happening Here
 
-1. During enrollment, the password is saved to `FlutterSecureStorage` as plaintext.
+1. During enrollment, the unhashed password is saved to `FlutterSecureStorage`  (encrypted at rest, but recoverable at runtime).
 2. During login, the app checks biometrics - and if that passes, it just reads the stored password back out.
 
 The biometric here is a **UI gate only**. The password is sitting in encrypted storage, yes, but:
@@ -199,7 +199,7 @@ frida -U -f com.example.biometric_auth -l script.js
 
 5. `callback.onAuthenticationSucceeded(resultInstance)` - calls the success callback directly. The app's auth flow receives a success result as if the user had genuinely placed their finger on the sensor.
 
-The app then reads the plaintext password from storage and hands it straight back.
+The app then reads the unhashed password from storage and hands it straight back.
 
 **Why does this work on bypassable mode but not on secure mode?**
 
