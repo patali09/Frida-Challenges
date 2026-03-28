@@ -2,8 +2,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
-/// Handles less-secure biometric authentication with plaintext credentials
-/// WARNING: This stores credentials in plaintext in secure storage
+/// Handles less-secure biometric authentication 
 /// Use SecureAuthService for production applications
 class InsecureAuthService {
   final _localAuth = LocalAuthentication();
@@ -31,7 +30,7 @@ class InsecureAuthService {
     }
   }
 
-  /// Enroll bypassable credentials (stored in plaintext)
+  /// Enroll bypassable credentials 
   Future<void> enrollBypassable({
     required String username,
     required String password,
